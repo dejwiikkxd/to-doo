@@ -1,9 +1,10 @@
 <script setup>
 import {ref, onMounted, computed, watch} from 'vue'
+import draggable from 'vuedraggable'
 
 const todos = ref([])
 const name = ref('')
-
+const id = 0
 const input_title = ref('')
 const input_content = ref('')
 const input_priority = ref(null)
@@ -22,9 +23,10 @@ const addTodo = () => {
     content:input_content.value,
     priority: input_priority.value,
     done: false,
+    id: id+1,
     createdAt: new Date().getTime()
   })
-
+  console.log(id)
   input_title.value = ''
   input_content.value = ''
   input_priority.value = null
@@ -43,6 +45,10 @@ watch(name, (newVal) => {
   localStorage.setItem('name', newVal)
 })
 
+checkMove:(e) => {
+      window.console.log("Future index: " + e.draggedContext.futureIndex);
+      return true;
+}
 
 onMounted(() => {
   name.value = localStorage.getItem('name') || ''
@@ -65,7 +71,17 @@ onMounted(() => {
     <section class="todo-list">
       <h3>Tvoje úkoly</h3>
       <div class="list">
-          <div v-for="todo in todos_asc" :class="`todo-item ${todo.done && 'done'}`">
+        <draggable
+        :list="todos"
+        :item-key="item => item.id"
+        class="list"
+        :move="checkMove"
+        draggable=".todo-item"
+        @start="dragging = true"
+        @end="dragging = false"
+      >
+      <!--  
+          <div v-for="todo in todos_asc" :key="todo.id" :class="`todo-item ${todo.done && 'done'}`">
             <label>
               <input type="checkbox" v-model="todo.done"/>
               <span :class="`bubble ${todo.priority}`"></span>
@@ -78,6 +94,23 @@ onMounted(() => {
               <button class="delete" @click="removeTodo(todo)">Smazat</button>
             </div>
           </div>
+      -->
+        <template #item="{ element }">
+          <div :key="element.id" :class="`todo-item ${element.done && 'done'}`">
+            <label>
+              <input type="checkbox" v-model="element.done"/>
+              <span :class="`bubble ${element.priority}`"></span>
+            </label>
+            <div class="todo-content">
+              <input type="text" class="description" style="font-weight: 600;" v-model="element.title"/>
+              <input type="text" class="description" v-model="element.content"/>
+            </div>
+            <div class="actions">
+              <button class="delete" @click="removeTodo(element)">Smazat</button>
+            </div>
+          </div>
+        </template>
+        </draggable>
       </div>
       <div v-if="todos.length == 0">
         <h2 class="noTodos">Nemáš žádné úkoly. Měl bys nějaký přidat!</h2>

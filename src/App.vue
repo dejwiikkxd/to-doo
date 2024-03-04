@@ -8,6 +8,7 @@ const id = 0
 const input_title = ref('')
 const input_content = ref('')
 const input_priority = ref(null)
+const showForm = ref(false)
 
 const todos_asc = computed(() => todos.value.sort((a,b) => {
   return b.createdAt - a.createdAt
@@ -26,7 +27,7 @@ const addTodo = () => {
     id: id+1,
     createdAt: new Date().getTime()
   })
-  console.log(id)
+  showForm.value = false;
   input_title.value = ''
   input_content.value = ''
   input_priority.value = null
@@ -35,6 +36,11 @@ const addTodo = () => {
 const removeTodo = todo =>{
   todos.value = todos.value.filter(t => t !== todo)
 }
+
+const toggleForm = () => {
+      showForm.value = !showForm.value;
+      console.log(showForm.value)
+    }
 
 watch(todos, newVal => {
   localStorage.setItem('todos', JSON.stringify(newVal))
@@ -63,61 +69,9 @@ onMounted(() => {
       <h1 class="title">
       Vítej v ToDoo <input type="text" placeholder="Tvoje jméno" v-model="name"/>
       </h1>
-      <h3 class="navAdd"><a id="navAdd" href="#task">Pridat ukol</a></h3>
+      <button @click="toggleForm" id="navAdd">Přidej úkol</button>
     </section>
-
-    
-    <!-- alt + 96 -->
-    <section class="todo-list">
-      <h3>Tvoje úkoly</h3>
-      <div class="list">
-        <draggable
-        :list="todos"
-        :item-key="item => item.id"
-        class="list"
-        :move="checkMove"
-        draggable=".todo-item"
-        @start="dragging = true"
-        @end="dragging = false"
-      >
-      <!--  
-          <div v-for="todo in todos_asc" :key="todo.id" :class="`todo-item ${todo.done && 'done'}`">
-            <label>
-              <input type="checkbox" v-model="todo.done"/>
-              <span :class="`bubble ${todo.priority}`"></span>
-            </label>
-            <div class="todo-content">
-              <input type="text" class="description" style="font-weight: 600;" v-model="todo.title"/>
-              <input type="text" class="description" v-model="todo.content"/>
-            </div>
-            <div class="actions">
-              <button class="delete" @click="removeTodo(todo)">Smazat</button>
-            </div>
-          </div>
-      -->
-        <template #item="{ element }">
-          <div :key="element.id" :class="`todo-item ${element.done && 'done'}`">
-            <label>
-              <input type="checkbox" v-model="element.done"/>
-              <span :class="`bubble ${element.priority}`"></span>
-            </label>
-            <div class="todo-content">
-              <input type="text" class="description" style="font-weight: 600;" v-model="element.title"/>
-              <input type="text" class="description" v-model="element.content"/>
-            </div>
-            <div class="actions">
-              <button class="delete" @click="removeTodo(element)">Smazat</button>
-            </div>
-          </div>
-        </template>
-        </draggable>
-      </div>
-      <div v-if="todos.length == 0">
-        <h2 class="noTodos">Nemáš žádné úkoly. Měl bys nějaký přidat!</h2>
-      </div>
-    </section>
-
-    <section class="create-todo">
+    <section v-if="showForm" class="create-todo">
       <h3>Přidej další úkol</h3>
       <h4>Co bych tak chtěl dnes udělat?</h4>
       <form @submit.prevent="addTodo">
@@ -166,9 +120,64 @@ onMounted(() => {
 
         </div>
 
-        <input type="submit" value="Přidat úkol" id="task"/>
+        <input 
+        type="submit" 
+        value="Přidat úkol" 
+        id="task"/>
       </form>
     </section>
+    
+    <!-- alt + 96 -->
+    <section class="todo-list">
+      <h3>Tvoje úkoly</h3>
+      <div class="list">
+        <draggable
+        :list="todos"
+        :item-key="item => item.id"
+        class="list"
+        :move="checkMove"
+        draggable=".todo-item"
+        @start="dragging = true"
+        @end="dragging = false"
+      >
+      <!--  
+          <div v-for="todo in todos_asc" :key="todo.id" :class="`todo-item ${todo.done && 'done'}`">
+            <label>
+              <input type="checkbox" v-model="todo.done"/>
+              <span :class="`bubble ${todo.priority}`"></span>
+            </label>
+            <div class="todo-content">
+              <input type="text" class="description" style="font-weight: 600;" v-model="todo.title"/>
+              <input type="text" class="description" v-model="todo.content"/>
+            </div>
+            <div class="actions">
+              <button class="delete" @click="removeTodo(todo)">Smazat</button>
+            </div>
+          </div>
+      -->
+        <template #item="{ element }">
+          <div :key="element.id" :class="`todo-item ${element.done && 'done'}`">
+            <label>
+              <input type="checkbox" v-model="element.done"/>
+              <span :class="`bubble ${element.priority}`"></span>
+            </label>
+            <div class="todo-content">
+              <input type="text" class="description" style="font-weight: 600;" v-model="element.title"/>
+              <input type="text" class="description" v-model="element.content" placeholder="Sem přidej popis úkolu"/>
+            </div>
+            <div class="actions">
+              <button class="delete" @click="removeTodo(element)">Smazat</button>
+            </div>
+          </div>
+        </template>
+        </draggable>
+      </div>
+      <div v-if="todos.length == 0">
+        <h2 class="noTodos">Nemáš žádné úkoly. Měl bys nějaký přidat!</h2>
+      </div>
+    </section>
+
+    
   </main>
 
 </template>

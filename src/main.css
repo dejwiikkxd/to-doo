@@ -3,7 +3,7 @@
 	--lowPrio: #3A82EE;
 	--midPrio: #ff9100;
 	--highPrio: #f8004a;
-	--light: #EEE;
+	--light: #eeeeee;
 	--grey: #888;
 	--dark: #07070a;
 	--danger: #ff5b57;
@@ -21,6 +21,13 @@
 	font-family: 'montserrat', sans-serif;
 }
 
+
+
+.app{
+	margin-inline: 15rem;
+	margin-top: 1.5rem;
+}
+
 input:not([type="radio"]):not([type="checkbox"]), button {
 	appearance: none;
 	border: none;
@@ -30,8 +37,8 @@ input:not([type="radio"]):not([type="checkbox"]), button {
 }
 
 body {
-	background: var(--light);
 	color: var(--dark);
+	background: var(--light);
 }
 
 section {
@@ -55,19 +62,25 @@ h4 {
 	margin-bottom: 0.5rem;
 }
 
-.navAdd{
-	margin-top: 1.5rem;
-	margin-bottom: 0;
-	cursor: pointer;
+.create-todo{
+	margin-top: 0;
+}
+
+.todo-list{
+	margin-top: 0rem;
 }
 
 #navAdd{
 	text-decoration: none;
-	background-color: #FFF;
+	background-color: var(--primary);
 	padding: 0.7rem;
+	font-size: 1rem;
 	border-radius: 0.5rem;
-	color: black;
+	color: white;
 	transition: 0.5s;
+	margin-top: 0.5rem;
+	margin-bottom: 0;
+	cursor: pointer;
 	
 }
 #navAdd:hover{
@@ -85,9 +98,10 @@ h4 {
 }
 .greeting{
 	margin-top: 0;
+	margin-bottom: 0;
 	padding-block: 3%;
 	width: 100%;
-	background-color: var(--primary);
+	border-radius: 10px;
 }
 
 .greeting .title,
@@ -274,4 +288,19 @@ input:checked ~ .bubble::after {
 .todo-item.done .todo-content input {
 	text-decoration: line-through;
 	color: var(--grey);
+}
+@media screen and (max-width:1300px) {
+	.app{
+		margin-inline: 0;
+		margin-top: 0;
+	}
+	
+}
+@media screen and (max-width:400px) {
+	.todo-item .todo-content input{
+		font-size: 1rem;
+	}
+	.create-todo input[type="text"]{
+		font-size: 1rem;
+	}
 }

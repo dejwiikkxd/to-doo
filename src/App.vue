@@ -39,8 +39,8 @@ const removeTodo = todo =>{
 
 const toggleForm = () => {
       showForm.value = !showForm.value;
-      console.log(showForm.value)
     }
+
 
 watch(todos, newVal => {
   localStorage.setItem('todos', JSON.stringify(newVal))
@@ -56,6 +56,11 @@ checkMove:(e) => {
       return true;
 }
 
+const saveToLocalStorage = () => {
+  // Reverse the order and save to localStorage
+  localStorage.setItem('todos', JSON.stringify(todos.value.slice().reverse()))
+}
+
 onMounted(() => {
   name.value = localStorage.getItem('name') || ''
   todos.value = JSON.parse(localStorage.getItem('todos')) || []
@@ -69,7 +74,7 @@ onMounted(() => {
       <h1 class="title">
       Vítej v ToDoo <input type="text" placeholder="Tvoje jméno" v-model="name"/>
       </h1>
-      <button @click="toggleForm" id="navAdd">Přidej úkol</button>
+      <button @click="() => { toggleForm(); saveToLocalStorage(); }" id="navAdd">Přidej úkol</button>
     </section>
     <section v-if="showForm" class="create-todo">
       <h3>Přidej další úkol</h3>
@@ -136,25 +141,11 @@ onMounted(() => {
         :item-key="item => item.id"
         class="list"
         :move="checkMove"
+        :options="{ group: 'todos', animation: 200, onUpdate: saveToLocalStorage }"
         draggable=".todo-item"
         @start="dragging = true"
         @end="dragging = false"
       >
-      <!--  
-          <div v-for="todo in todos_asc" :key="todo.id" :class="`todo-item ${todo.done && 'done'}`">
-            <label>
-              <input type="checkbox" v-model="todo.done"/>
-              <span :class="`bubble ${todo.priority}`"></span>
-            </label>
-            <div class="todo-content">
-              <input type="text" class="description" style="font-weight: 600;" v-model="todo.title"/>
-              <input type="text" class="description" v-model="todo.content"/>
-            </div>
-            <div class="actions">
-              <button class="delete" @click="removeTodo(todo)">Smazat</button>
-            </div>
-          </div>
-      -->
         <template #item="{ element }">
           <div :key="element.id" :class="`todo-item ${element.done && 'done'}`">
             <label>
@@ -182,3 +173,18 @@ onMounted(() => {
 
 </template>
 
+<!--  
+          <div v-for="todo in todos_asc" :key="todo.id" :class="`todo-item ${todo.done && 'done'}`">
+            <label>
+              <input type="checkbox" v-model="todo.done"/>
+              <span :class="`bubble ${todo.priority}`"></span>
+            </label>
+            <div class="todo-content">
+              <input type="text" class="description" style="font-weight: 600;" v-model="todo.title"/>
+              <input type="text" class="description" v-model="todo.content"/>
+            </div>
+            <div class="actions">
+              <button class="delete" @click="removeTodo(todo)">Smazat</button>
+            </div>
+          </div>
+      -->
